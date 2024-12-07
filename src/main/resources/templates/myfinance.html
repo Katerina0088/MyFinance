@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Finance</title>
+    <style>
+        body {
+            background-image: url('https://avatars.mds.yandex.net/i?id=0e5b95cfbb94b72f1a8a11120f3d42df9022268a-4662214-images-thumbs&n=13');
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<h1 class="display-4 text-center mb-4">МОИ ФИНАНСЫ</h1>
+
+<!-- User Information -->
+<div th:if="${currentUser != null}" class="container mt-4">
+    <div class="card">
+        <div class="card-body position-relative">
+            <h5 class="card-title position-absolute top-50 start-50 translate-middle">Здравствуйте, <span th:text="${currentUser.username}"></span>!</h5>
+        </div>
+        <a href="/logout" class="btn btn-outline-secondary">Logout</a>
+    </div>
+</div>
+
+<div class="container transaction_container">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="mb-0 display-4 text-center mb-4">Мои операции</h3>
+        </div>
+        <div class="card-body">
+            <table id="transactions-table" class="table table-striped table-bordered mb-5 mt-4">
+                <thead>
+                <tr>
+                    <th scope="col">Сумма</th>
+                    <th scope="col">Категоря</th>
+                    <th scope="col">Тип транзакции</th>
+                    <th scope="col">Описание</th>
+                    <th scope="col">Дата</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="transaction: ${transactions}">
+                    <td class="text-start"><span th:text="${transaction.amount}"></span></td>
+                    <td class="text-start"><span th:text="${transaction.category.name}"></span></td>
+                    <td class="text-start"><span th:text="${transaction.type}"></span></td>
+                    <td class="text-start"><span th:text="${transaction.description}"></span></td>
+                    <td class="text-start"><span th:text="${transaction.date}"></span></td>
+                    <td>
+                        <a th:href="@{/edit-transaction/{id}(id=${transaction.id})}" class="btn btn-warning">Редактировать</a>
+                        <form th:action="@{/delete-transaction/{id}(id=${transaction.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a href="/add-transaction" class="btn btn-success">Добавить операцию</a>
+        </div>
+    </div>
+</div>
+
+
+<div class="container category_conteiner">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="mb-0 display-4 text-center mb-4">Сохраненные Категории</h3>
+        </div>
+        <div class="card-body">
+            <table id="category_table" class="table table-striped table-bordered mb-5 mt-4">
+                <thead>
+                <tr>
+                    <th scope="col">Название</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category: ${categories}">
+                    <td class="text-start"><span th:text="${category.name}"></span></td>
+                    <td>
+                        <a th:href="@{/edit-category/{id}(id=${category.id})}" class="btn btn-warning">Редактировать</a>
+                        <form th:action="@{/delete-categor/{id}(id=${category.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a href="/add-category" class="btn btn-success">Добавить Категорию</a>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

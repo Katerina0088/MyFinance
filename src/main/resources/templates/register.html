@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Registration</title>
+    <link href="/util/bootstrap-5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/util/bootstrap-5.3.3/js/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="/style/header/header.css">
+    <link rel="stylesheet" href="/style/main.css">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<div  class="d-flex flex-column bd-highlight mb-1 custom-gap">
+    <header class="bd-highlight" th:insert="~{header :: header}"></header>
+</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header main-colour text-white">
+                    <h3 class="mb-0">Регистрация</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/register}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Имя пользователя:</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Пароль:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-register main-colour w-100">Зарегистрироваться</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${param.error}">
+        <div class="alert alert-danger mt-3" role="alert">
+            Неправильное имя пользователя или пароль!
+            <a href="/register" class="btn btn-link">Зарегистрироваться</a>
+        </div>
+    </div></div>
+</body>
+</html>
