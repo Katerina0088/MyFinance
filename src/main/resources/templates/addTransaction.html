@@ -1,10 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Форма добавления сотрудника:</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Добавляем стили для фона -->
+    <style>
+        body {
+            background-image: url('https://avatars.mds.yandex.net/i?id=0e5b95cfbb94b72f1a8a11120f3d42df9022268a-4662214-images-thumbs&n=13'); /* Замените на путь к вашему изображению */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.7); /* Светлый фон контейнера для читаемости текста */
+            padding: 20px;
+            border-radius: 15px; /* Скругленные углы контейнера */
+        }
+    </style>
 </head>
 <body>
+<div class="container mt-5 mb-5">
+    <h1>Добавление Операции</h1>
+    <form th:action="@{/add-transaction}" method="post">
+        <input type="hidden" th:name="user" th:value="${currentUser.id}"/>
+        <input type="number" th:name="amount" placeholder="Введите сумму операции" class="form-control mb-3" required>
+        <input type="date" th:name="dateString" class="form-control mb-3" required>
+        <input type="text" th:name="description" placeholder="Введите описание операции" class="form-control mb-3" required>
+        <div class="mb-3">
+            <label for="type" class="form-label">Тип транзакции</label>
+            <select class="form-select" id="type" th:name="type" required>
+                <option value="" disabled selected>Выберите тип транзакции</option>
+                <option th:each="type : ${types}"
+                        th:value="${type}"
+                        th:text="${type}"></option>
+            </select>
+        </div>
 
+        <div class="mb-3">
+            <label for="categoryId" class="form-label">Категория</label>
+            <select class="form-select" id="categoryId" th:name="categoryId" required>
+                <option value="" disabled selected>Выберите категорию</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Добавить Операцию</button>
+    </form>
+</div>
 </body>
 </html>

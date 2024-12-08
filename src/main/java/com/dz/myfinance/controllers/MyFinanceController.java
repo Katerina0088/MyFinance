@@ -14,10 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 @Controller
@@ -51,7 +50,7 @@ public class MyFinanceController {
 
             BigDecimal lastMonthIncome = transactionRepository.sumIncomeByUserAndDateRange(
                     currentUser.getId(),
-                    TransactionType.INCOME,
+                    TransactionType.ДОХОД,
                     lastMonthStart,
                     lastMonthEnd
             );
@@ -66,18 +65,105 @@ public class MyFinanceController {
         return "myfinance";
     }
 
+
+
     @GetMapping("/add-transaction")
-    public String addTransaction(Model model) {
+
+    public String addTransaction(Model model)
+    {
+        User currentUser = userService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
+        List<TransactionType> types = Arrays.asList(TransactionType.values());
+        model.addAttribute("types", types);
+        List<Category> categories = categoryRepository.findByUserId(currentUser.getId());
+        model.addAttribute("categories", categories);
         return "addTransaction"; // Возвращает имя HTML-шаблона
     }
 
+
     @GetMapping("/edit-transaction/{id}")
     public String editTransaction(@PathVariable Long id, Model model) {
+        User currentUser = userService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
+        List<Category> categories = categoryRepository.findByUserId(currentUser.getId());
+        List<TransactionType> types = Arrays.asList(TransactionType.values());
+        model.addAttribute("types", types);
+        model.addAttribute("categories", categories);
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Транзакция не найдена"));
         model.addAttribute("transaction", transaction);
         return "editTransaction";
     }
+
+    @PostMapping("/edit-transaction")
+    public String editTransaction(@RequestParam Long id,
+                                  @RequestParam BigDecimal amount,
+                                  @RequestParam String description,
+                                  @RequestParam Long categoryId,
+                                  @RequestParam String type,
+                                  @RequestParam Date date,
+                                  Model model) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Транзакция не найдена"));
+
+        transaction.setAmount(amount);
+        transaction.setDate(date);
+        transaction.setDescription(description);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Категория не найдена"));
+        transaction.setCategory(category);
+
+        // Убедимся, что тип транзакции корректен
+        if (!type.equals(transaction.getType())) {
+            transaction.setType(TransactionType.valueOf(type));
+        }
+
+        transactionRepository.save(transaction);
+
+        // Рендеринг списка всех транзакций после редактирования
+        model.addAttribute("transactions", transactionRepository.findAll());
+        return "redirect:/"; // Шаблон для отображения обновленного списка
+    }
+
+    @PostMapping("/add-transaction")
+    public String addTransaction(@RequestParam BigDecimal amount,
+                                  @RequestParam String description,
+                                  @RequestParam Long categoryId,
+                                  @RequestParam String type,
+                                 @RequestParam String dateString,
+                                 @RequestParam Long user,
+                                  Model model) throws ParseException {
+        Transaction transaction = new Transaction();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = dateFormat.parse(dateString);
+        transaction.setDate(date);
+        transaction.setAmount(amount);
+        transaction.setUser(userService.getUserById(user));
+        transaction.setDescription(description);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Категория не найдена"));
+        transaction.setCategory(category);
+
+        // Убедимся, что тип транзакции корректен
+        if (!type.equals(transaction.getType())) {
+            transaction.setType(TransactionType.valueOf(type));
+        }
+
+        transactionRepository.save(transaction);
+
+        // Рендеринг списка всех транзакций после редактирования
+        model.addAttribute("transactions", transactionRepository.findAll());
+        return "redirect:/"; // Шаблон для отображения обновленного списка
+    }
+
+    @PostMapping("/delete-transaction/{id}")
+    public String deleteTransaction(@PathVariable Long id, Model model) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("не найден"));
+        transactionRepository.delete(transaction);
+        return "redirect:/";
+    }
+
 
 
     @GetMapping("/add-category")
@@ -86,11 +172,19 @@ public class MyFinanceController {
     {
         User currentUser = userService.getCurrentUser();
         model.addAttribute("currentUser", currentUser);
+        List<Category> categories = categoryRepository.findByUserId(currentUser.getId());
+        model.addAttribute("categories", categories);
         return "addCategory"; // Возвращает имя HTML-шаблона
     }
 
     @GetMapping("/edit-category/{id}")
     public String editCategory(@PathVariable Long id, Model model) {
+
+        User currentUser = userService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
+        List<Category> categories = categoryRepository.findByUserId(currentUser.getId());
+        model.addAttribute("categories", categories);
+        model.addAttribute("currentUser", currentUser);
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Категория не найдена"));
         model.addAttribute("category", category);
@@ -99,7 +193,9 @@ public class MyFinanceController {
 
 
 
-    // Метод для добавления новой категории
+
+
+    //категории
 
     @PostMapping("/add-category")
     public String addCategory(@RequestParam String name, @RequestParam Long user, Model model) {
