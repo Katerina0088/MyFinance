@@ -8,7 +8,6 @@ import com.dz.myfinance.repositories.CategoryRepository;
 import com.dz.myfinance.repositories.TransactionRepository;
 import com.dz.myfinance.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,70 +66,72 @@ public class MyFinanceController {
         return "myfinance";
     }
 
+    @GetMapping("/add-transaction")
+    public String addTransaction(Model model) {
+        return "addTransaction"; // Возвращает имя HTML-шаблона
+    }
+
+    @GetMapping("/edit-transaction/{id}")
+    public String editTransaction(@PathVariable Long id, Model model) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Транзакция не найдена"));
+        model.addAttribute("transaction", transaction);
+        return "editTransaction";
+    }
+
+
+    @GetMapping("/add-category")
+
+    public String addCategory(Model model)
+    {
+        User currentUser = userService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
+        return "addCategory"; // Возвращает имя HTML-шаблона
+    }
+
+    @GetMapping("/edit-category/{id}")
+    public String editCategory(@PathVariable Long id, Model model) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Категория не найдена"));
+        model.addAttribute("category", category);
+        return "editCategory";
+    }
+
+
+
     // Метод для добавления новой категории
+
     @PostMapping("/add-category")
-    public String addCategory(@RequestParam String name, @RequestParam Long userId) {
+    public String addCategory(@RequestParam String name, @RequestParam Long user, Model model) {
         Category category = new Category();
         category.setName(name);
-        category.setUser(userService.getUserById(userId));
+        category.setUser(userService.getUserById(user)); // Set the user for the category
+        categoryRepository.save(category); // Save the category, ID will be generated automatically
+        return "redirect:/"; // Redirect to the desired page after adding
+    }
+
+    @PostMapping("/delete-category/{id}")
+    public String deleteEmployee(@PathVariable Long id, Model model) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("не найден"));
+        categoryRepository.delete(category);
+        return "redirect:/";
+    }
+    // Метод для редактирования категории
+
+    @PostMapping("/edit-category")
+    public String saveEditedCategory(@RequestParam Long id, @RequestParam String name, Model model) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("не найдена"));
+        category.setName(name);
         categoryRepository.save(category);
         return "redirect:/";
     }
-
-    // Метод для удаления категории
-    @GetMapping("/delete-category/{id}")
-    public String deleteCategory(@PathVariable Long id) {
-        categoryRepository.deleteById(id);
-        return "redirect:/";
-    }
-
-    // Метод для редактирования категории
-    @PostMapping("/edit-category")
-    public String editCategory(@RequestParam Long id, @RequestParam String newName) {
-        Optional<Category> category = categoryRepository.findById(id);
-        if (category.isPresent()) {
-            Category cat = category.get();
-            cat.setName(newName);
-            categoryRepository.updateCategoryName(cat.getId(), newName);
-        }
-        return "redirect:/";
-    }
-
-    // Метод для добавления новой транзакции
-    @PostMapping("/add-transaction")
-    public String addTransaction(@RequestParam BigDecimal amount,
-                                 @RequestParam String description,
-                                 @RequestParam Long categoryId) {
-        Transaction transaction = new Transaction();
-        transaction.setAmount(amount);
-        transaction.setDescription(description);
-        Category category = categoryRepository.findById(categoryId).orElseThrow();
-        transaction.setCategory(category);
-        transaction.setUser(userService.getCurrentUser());
-        transactionRepository.save(transaction);
-        return "redirect:/";
-    }
-
-    // Метод для удаления транзакции
-    @GetMapping("/delete-transaction/{id}")
-    public String deleteTransaction(@PathVariable Long id) {
-        transactionRepository.deleteById(id);
-        return "redirect:/";
-    }
-
-    // Метод для редактирования транзакции
-    @PostMapping("/edit-transaction")
-    public String editTransaction(@RequestParam Long id,
-                                  @RequestParam BigDecimal newAmount,
-                                  @RequestParam String newDescription) {
-        Optional<Transaction> transaction = transactionRepository.findById(id);
-        if (transaction.isPresent()) {
-            Transaction tr = transaction.get();
-            tr.setAmount(newAmount);
-            tr.setDescription(newDescription);
-            transactionRepository.save(tr);
-        }
-        return "redirect:/";
-    }
 }
+
+
+
+
+
+
 
