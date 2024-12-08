@@ -1,0 +1,27 @@
+.root {
+    -fx-background-color: #f8f9fa;
+}
+
+.background {
+    -fx-background-color: #3498db;
+}
+
+.label {
+    -fx-font-size: 18px;
+    -fx-text-fill: #333;
+}
+
+.field {
+    -fx-prompt-text-fill: #999;
+    -fx-border-radius: 5;
+}
+
+.button {
+    -fx-background-radius: 25;
+    -fx-padding: 10 20;
+    -fx-border-width: 2;
+    -fx-border-color: #3498db;
+    -fx-background-color: linear-gradient(to bottom, #2980b9, #207cca);
+    -fx-text-fill: WHITE;
+    -fx-font-weight: bold;
+}
