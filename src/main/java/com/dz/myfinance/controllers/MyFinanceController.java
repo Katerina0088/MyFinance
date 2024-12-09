@@ -2,6 +2,7 @@ package com.dz.myfinance.controllers;
 
 import com.dz.myfinance.enums.TransactionType;
 import com.dz.myfinance.models.Category;
+import com.dz.myfinance.models.MonthlyStatistics;
 import com.dz.myfinance.models.Transaction;
 import com.dz.myfinance.models.User;
 import com.dz.myfinance.repositories.CategoryRepository;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 
@@ -32,7 +34,6 @@ public class MyFinanceController {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    // Метод для отображения главной страницы с категориями и транзакциями пользователя
     @GetMapping("/")
     public String homePage(Model model) {
         User currentUser = userService.getCurrentUser();
@@ -41,30 +42,66 @@ public class MyFinanceController {
             List<Category> categories = categoryRepository.findByUserId(currentUser.getId());
             List<Transaction> transactions = transactionRepository.findAllByUserId(currentUser.getId());
 
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.MONTH, -1);
-            Date lastMonthStart = cal.getTime();
-            Date lastMonthEnd = new Date();
+            // Get the current month start and end dates
+            LocalDate startDate = LocalDate.now().withDayOfMonth(1);
+            LocalDate endDate = LocalDate.now().plusMonths(1).withDayOfMonth(1);
 
-
-            BigDecimal lastMonthIncome = transactionRepository.sumIncomeByUserAndDateRange(
+            // Calculate total income and expenses for the current month
+            BigDecimal totalIncome = transactionRepository.sumIncomeByUserAndDateRange(
                     currentUser.getId(),
                     TransactionType.ДОХОД,
-                    lastMonthStart,
-                    lastMonthEnd
+                    java.sql.Date.valueOf(startDate),
+                    java.sql.Date.valueOf(endDate)
             );
+
+            BigDecimal totalExpenses = transactionRepository.sumExpensesByUserAndDateRange(
+                    currentUser.getId(),
+                    TransactionType.РАСХОД,
+                    java.sql.Date.valueOf(startDate),
+                    java.sql.Date.valueOf(endDate)
+            );
+
+            long transactionCount = transactionRepository.countTransactionsByDateRange(
+                    currentUser.getId(),
+                    java.sql.Date.valueOf(startDate),
+                    java.sql.Date.valueOf(endDate)
+            );
+
+            // Calculate monthly statistics for the last 12 months
+            List<MonthlyStatistics> monthlyStatistics = new ArrayList<>();
+            for (int i = 0; i < 12; i++) {
+                LocalDate monthStart = LocalDate.now().minusMonths(i).withDayOfMonth(1);
+                LocalDate monthEnd = monthStart.plusMonths(1).withDayOfMonth(1);
+
+                BigDecimal monthlyIncome = Optional.ofNullable(transactionRepository.sumIncomeByUserAndDateRange(
+                        currentUser.getId(),
+                        TransactionType.ДОХОД,
+                        java.sql.Date.valueOf(monthStart),
+                        java.sql.Date.valueOf(monthEnd)
+                )).orElse(BigDecimal.ZERO);
+
+                BigDecimal monthlyExpenses = Optional.ofNullable(transactionRepository.sumExpensesByUserAndDateRange(
+                        currentUser.getId(),
+                        TransactionType.РАСХОД,
+                        java.sql.Date.valueOf(monthStart),
+                        java.sql.Date.valueOf(monthEnd)
+                )).orElse(BigDecimal.ZERO);
+
+                monthlyStatistics.add(new MonthlyStatistics(monthStart.getMonth().toString(), monthlyIncome, monthlyExpenses));
+            }
 
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("categories", categories);
             model.addAttribute("transactions", transactions);
-            model.addAttribute("lastMonthIncome", lastMonthIncome);
+            model.addAttribute("totalIncome", totalIncome);
+            model.addAttribute("totalExpenses", totalExpenses);
+            model.addAttribute("transactionCount", transactionCount);
+            model.addAttribute("monthlyStatistics", monthlyStatistics);
         } else {
             model.addAttribute("message", "Please log in to access this page.");
         }
         return "myfinance";
     }
-
 
 
     @GetMapping("/add-transaction")
