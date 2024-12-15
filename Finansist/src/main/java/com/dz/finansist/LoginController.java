@@ -58,7 +58,7 @@ public class LoginController {
 
             // Создаем запрос
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://192.168.0.15:8080/login"))
+                    .uri(URI.create("http://192.168.0.164:8080/api/login"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(createRequestBody(username, password)))
                     .build();
