@@ -8,6 +8,7 @@ import java.util.List;
 @Entity
 @Table(name = "categories")
 public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,4 +22,8 @@ public class Category {
     @ManyToOne // Assuming a category belongs to one user
     @JoinColumn(name = "user_id") // This should match your database schema
     private User user; // Reference to the User entity
-}
+
+    public Category() {
+    }
+
+  }

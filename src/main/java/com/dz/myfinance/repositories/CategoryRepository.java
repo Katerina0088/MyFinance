@@ -30,4 +30,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query("SELECT COUNT(c) FROM Category c WHERE c.user = :user")
     long countCategoriesByUser(User user);
+
+
+    @Query("SELECT MAX(c.id) FROM Category c")
+    Long findMaxId();
+
+
+
+
+
+
 }
