@@ -14,9 +14,7 @@
       <children>
 
          <Button fx:id="loginButton" layoutX="197.0" layoutY="154.0" onAction="#handleLoginButtonClick" prefHeight="25.0" prefWidth="67.0" text="Login" />
-      
-      <Button layoutX="197.0" layoutY="186.0" onAction="#onRegisterButtonClick" prefHeight="25.0" prefWidth="67.0" text="Register" />
-      
+
       <Label fx:id="welcomeText" layoutX="164.0" layoutY="191.0" prefHeight="18.0" prefWidth="127.0" />
          <PasswordField fx:id="passwordField" alignment="TOP_CENTER" layoutX="151.0" layoutY="115.0" prefHeight="25.0" prefWidth="151.0" />
 

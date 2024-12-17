@@ -2,9 +2,12 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -18,24 +21,24 @@
             <items>
                 <HBox prefHeight="25.0" prefWidth="555.0">
                     <children>
-                        <Button mnemonicParsing="false" text="Главная" style="-fx-background-color: #cccccc; -fx-text-fill: white;">>
+                        <Button mnemonicParsing="false" style="-fx-background-color: #cccccc; -fx-text-fill: white;" text="Главная">>
                             <HBox.margin>
                                 <Insets left="20.0" />
                             </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" text="Статистика"  onAction="#openStatistic">
+                        <Button mnemonicParsing="false" onAction="#openStatistic" text="Статистика">
                             <HBox.margin>
                                 <Insets left="10.0" />
                             </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" text="Категории" onAction="#openCategories">
+                        <Button mnemonicParsing="false" onAction="#openCategories" text="Категории">
                             <HBox.margin>
                                 <Insets left="10.0" />
                             </HBox.margin>
                         </Button>
                     </children>
                 </HBox>
-                <Label fx:id="userName"  alignment="TOP_RIGHT" contentDisplay="RIGHT" prefHeight="14.0" prefWidth="980.0" text="UserName">
+                <Label fx:id="userName" alignment="TOP_RIGHT" contentDisplay="RIGHT" prefHeight="14.0" prefWidth="980.0" text="UserName">
                     <font>
                         <Font name="Bell MT" size="20.0" />
                     </font>
@@ -52,6 +55,17 @@
                 <TableColumn fx:id="transactionsCategory" prefWidth="230.66670735677076" text="Категория" />
             </columns>
         </TableView>
+      <TextField fx:id="typeTransaction" layoutX="126.0" layoutY="63.0" />
+      <Label layoutX="16.0" layoutY="67.0" text="Тип транзакции" />
+      <TextField fx:id="typeDescription" layoutX="126.0" layoutY="103.0" />
+      <TextField fx:id="typeSumma" layoutX="433.0" layoutY="63.0" />
+      <Label layoutX="16.0" layoutY="107.0" text="Описание" />
+      <Label layoutX="326.0" layoutY="107.0" text="Категории" />
+      <Label layoutX="326.0" layoutY="67.0" text="Сумма" />
+      <Label layoutX="611.0" layoutY="67.0" text="Дата" />
+      <Button layoutX="682.0" layoutY="103.0" mnemonicParsing="false" text="Добавить" onAction="#addTransaction"/>
+      <DatePicker fx:id="selectDate" layoutX="682.0" layoutY="63.0" />
+      <ChoiceBox fx:id="selectCategory" layoutX="433.0" layoutY="103.0" prefHeight="25.0" prefWidth="149.0" />
 
 
     </children>

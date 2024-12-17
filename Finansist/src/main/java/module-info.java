@@ -10,6 +10,7 @@ module com.example.finansist {
     requires com.fasterxml.jackson.databind;
     requires java.desktop;
     requires jdk.httpserver;
+    requires java.sql;
 
     opens com.dz.finansist to javafx.fxml;
     exports com.dz.finansist;

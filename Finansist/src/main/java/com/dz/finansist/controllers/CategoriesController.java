@@ -2,6 +2,7 @@ package com.dz.finansist.controllers;
 
 import com.dz.finansist.model.Category;
 
+import com.dz.finansist.model.Transaction;
 import com.dz.finansist.utils.AlertController;
 import com.dz.finansist.utils.AuthorizationController;
 import javafx.beans.property.SimpleStringProperty;
@@ -30,6 +31,9 @@ public class CategoriesController {
     private Label userName;
 
     @FXML
+    private TextField nameCategory;
+
+    @FXML
     private TableView<String> categoriesTable;
     @FXML
     private TableColumn<String, String> categoriesNameColumn;
@@ -52,7 +56,7 @@ public class CategoriesController {
                         deleteButton.setStyle("-fx-background-color: #ff3030; -fx-text-fill: white;");
                         deleteButton.setOnAction(event -> {
                             String categoryName = getTableView().getItems().get(getIndex());
-                            deleteCategory(categoryName);
+                            deleteCategories(categoryName);
                         });
                     }
 
@@ -90,20 +94,13 @@ public class CategoriesController {
         }
     }
 
-
-    @FXML
-    public void deleteCategory(String categoryName) {
-
-        return;
-    }
-
     @FXML
     private void openStatistic(ActionEvent event) {
         try {
             Stage authStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             authStage.close();
 
-            Parent root = FXMLLoader.load(getClass().getResource("../fxml/tables-statistic.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("../fxml/statistic-view.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -124,6 +121,42 @@ public class CategoriesController {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void deleteCategories(String categoryName) {
+        try {
+            if (categoryName == "" || categoryName == null) {
+                AlertController.showAlertInfo("Ошибка", "Выберите категорию для удаления");
+                return;
+            }
+
+            String responseMessage= categoriesApi.deleteCategories(categoryName);
+            AlertController.showAlertInfo("Результат", responseMessage);
+            loadCategories();
+        } catch (Exception e) {
+            AlertController.showAlertInfo("Ошибка", "Не удалось удалить категорию");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void addCategory() {
+        try {
+
+            String categoryName = nameCategory.getText();
+            if (categoryName == "" || categoryName == null) {
+                AlertController.showAlertInfo("Ошибка", "Напишите категорию для добавления");
+                return;
+            }
+
+            String responseMessage= categoriesApi.addCategory(categoryName);
+            AlertController.showAlertInfo("Результат", responseMessage);
+            loadCategories();
+        } catch (Exception e) {
+            AlertController.showAlertInfo("Ошибка", "Не удалось добавить категорию");
             e.printStackTrace();
         }
     }

@@ -15,6 +15,7 @@ import java.util.List;
 
 public class CategoriesApi {
     private AuthorizationController authController;
+    public String BASE_URL = ("http://localhost:8080/api/");
 
     public   List<Category> getCategories() {
         try {
@@ -53,4 +54,72 @@ public class CategoriesApi {
             throw new RuntimeException(e);
         }
     }
+
+
+    public String deleteCategories(String categoryName) throws IOException {
+        try {
+
+            authController = new AuthorizationController();
+
+            String token = authController.getAuthToken();
+            HttpClient client = HttpClient.newHttpClient();
+
+            // Создаем запрос
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "categories/" + categoryName))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
+
+                    .DELETE()
+                    .build();
+
+            // Выполняем запрос
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 201) {
+                return "Успех";
+            } else {
+                System.out.println("Error: " + response.statusCode());
+                return "Не успех";
+            }
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Authentication failed: " + e.getMessage());
+            return null;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public  String addCategory(String categoryName) throws IOException {
+        try {
+            authController = new AuthorizationController();
+            String token = authController.getAuthToken();
+            HttpClient client = HttpClient.newHttpClient();
+
+            // Создаем запрос
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "categories"))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
+
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"name\":\"" + categoryName + "\"}"))
+                    .build();
+
+            // Выполняем запрос
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 201) {
+                return "Успех";
+            } else {
+                System.out.println("Error: " + response.statusCode());
+                return "Не успех";
+            }
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Authentication failed: " + e.getMessage());
+            return null;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }

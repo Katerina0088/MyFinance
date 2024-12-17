@@ -16,8 +16,8 @@ public class Category {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Transaction> transactions;
+    //@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    //private List<Transaction> transactions;
 
     @ManyToOne // Assuming a category belongs to one user
     @JoinColumn(name = "user_id") // This should match your database schema

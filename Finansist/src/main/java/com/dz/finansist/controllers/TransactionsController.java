@@ -4,6 +4,7 @@ import com.dz.finansist.api.CategoriesApi;
 import com.dz.finansist.api.TransactionsApi;
 import com.dz.finansist.model.Category;
 import com.dz.finansist.model.Transaction;
+import com.dz.finansist.model.TransactionType;
 import com.dz.finansist.utils.AlertController;
 import com.dz.finansist.utils.AuthorizationController;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,19 +16,37 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import com.dz.finansist.utils.AlertController;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TransactionsController {
+
     private AuthorizationController authController = new AuthorizationController();
+    private CategoriesApi categoriesApi = new CategoriesApi();
+
 
     private TransactionsApi transactionsApi = new TransactionsApi();
     private ObservableList<Transaction> observableList;
+
+    @FXML
+    private ChoiceBox<String> selectCategory;
+    @FXML
+    public TextField typeTransaction;
+    @FXML
+    public TextField typeDescription;
+    @FXML
+    public TextField typeSumma;
+    @FXML
+    public DatePicker selectDate;
 
     @FXML
     private TableView<Transaction> transactionsTable;
@@ -83,6 +102,14 @@ public class TransactionsController {
 
 
         loadTransactions();
+
+        List<Category> categories = categoriesApi.getCategories();
+        ObservableList<String> categoryNames = FXCollections.observableArrayList();
+        for (Category category : categories) {
+            categoryNames.add(category.getName());
+        }
+        selectCategory.setItems(categoryNames);
+
     }
 
     private void loadTransactions() {
@@ -138,7 +165,7 @@ public class TransactionsController {
             Stage authStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             authStage.close();
 
-            Parent root = FXMLLoader.load(getClass().getResource("../fxml/tables-statistic.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("../fxml/statistic-view.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -147,5 +174,36 @@ public class TransactionsController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    public void addTransaction() {
+        try {
+            Transaction transaction = new Transaction();
+            LocalDate selectedDate = selectDate.getValue();
+
+            Date date = java.sql.Date.valueOf(selectedDate);
+            transaction.setDate(date);
+            String categoryName = selectCategory.getValue();
+            String description = typeDescription.getText();
+            transaction.setAmount(typeSumma.getText());
+            transaction.setDescription(description);
+            transaction.setCategoryName(categoryName);
+            if (!(typeTransaction.getText()).equals(transaction.getType())) {
+                transaction.setType(TransactionType.valueOf(typeTransaction.getText()));
+            }
+
+            if (transaction.getCategoryName() == null ) {
+                AlertController.showAlertInfo("Ошибка", "Заполните все поля для добавления");
+                return;
+            }
+            String responseMessage= transactionsApi.addTransactions(transaction);
+            AlertController.showAlertInfo("Результат", responseMessage);
+            loadTransactions();
+        } catch (Exception e) {
+            AlertController.showAlertInfo("Ошибка", "Не удалось добавить транзакцию");
+            e.printStackTrace();
+        }
+    }
+
 }
 

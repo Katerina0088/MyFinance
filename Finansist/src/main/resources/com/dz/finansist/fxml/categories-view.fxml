@@ -5,15 +5,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="478.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/21.0.5" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dz.finansist.controllers.CategoriesController">
     <children>
-      <Pane layoutX="126.0" layoutY="173.0" prefHeight="200.0" prefWidth="200.0" />
       <ToolBar prefHeight="40.0" prefWidth="739.0">
         <items>
             <HBox prefHeight="25.0" prefWidth="555.0">
@@ -42,11 +41,14 @@
             </Label>
         </items>
       </ToolBar>
-            <TableView fx:id="categoriesTable" layoutX="112.0" layoutY="57.0">
+            <TableView fx:id="categoriesTable" layoutX="193.0" layoutY="52.0">
                 <columns>
                     <TableColumn fx:id="categoriesNameColumn" prefWidth="290.66674292087555" text="Название" />
                     <TableColumn fx:id="categoriesActionsColumn" prefWidth="222.66656494140625" text="Действия" />
                 </columns>
             </TableView>
+      <TextField fx:id="nameCategory" layoutX="14.0" layoutY="94.0" />
+      <Label layoutX="62.0" layoutY="66.0" text="Новое название" />
+      <Button onAction="#addCategory" layoutX="54.0" layoutY="136.0" mnemonicParsing="false" text="Добавить" />
     </children>
 </AnchorPane>

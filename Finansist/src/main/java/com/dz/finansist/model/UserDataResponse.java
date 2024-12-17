@@ -28,4 +28,12 @@ public class UserDataResponse {
     @JsonProperty("totalExpenses")
     private BigDecimal totalExpenses;
 
+    public BigDecimal getTotalIncome() {
+        return totalIncome;
+    }
+
+    public BigDecimal getTotalExpenses() {
+        return totalExpenses;
+    }
+
 }

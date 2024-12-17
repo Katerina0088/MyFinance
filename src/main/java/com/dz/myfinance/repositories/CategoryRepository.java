@@ -20,6 +20,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     List<Category> findAllByNameContaining(String name);
 
+    Category findByNameContaining(String name);
+
     @Modifying
     @Query("UPDATE Category c SET c.name = :name WHERE c.id = :id")
     int updateCategoryName(@Param("id") Long id, @Param("name") String name);
@@ -36,7 +38,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Long findMaxId();
 
 
-
+    @Modifying
+    @Query("DELETE FROM Category c WHERE c.name = :name")
+    int deleteByName(@Param("name") String name);
 
 
 

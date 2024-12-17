@@ -244,11 +244,25 @@ public class MyFinanceController {
     }
 
     @PostMapping("/delete-category/{id}")
-    public String deleteEmployee(@PathVariable Long id, Model model) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("не найден"));
-        categoryRepository.delete(category);
-        return "redirect:/";
+    public String deleteCategory(@PathVariable Long id, Model model) {
+        try {
+            Category category = categoryRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Категория не найдена"));
+
+            List<Transaction> transactions = transactionRepository.findByCategoryId(category.getId());
+
+            if (!transactions.isEmpty()) {
+                Transaction transaction = transactions.get(0);
+                transactionRepository.delete(transaction);
+            }
+
+            categoryRepository.delete(category);
+
+            return "redirect:/";
+        } catch (Exception e) {
+            model.addAttribute("error", "Ошибка при удалении категории: " + e.getMessage());
+            return "error";
+        }
     }
     // Метод для редактирования категории
 

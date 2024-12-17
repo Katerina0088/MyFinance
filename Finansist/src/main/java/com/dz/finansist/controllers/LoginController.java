@@ -76,8 +76,6 @@ public class LoginController {
         }
     }
 
-    public void onRegisterButtonClick(ActionEvent actionEvent) {
-    }
 
     @FXML
     public void onShowLinkMyFinance(ActionEvent event) {

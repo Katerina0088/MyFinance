@@ -98,4 +98,38 @@ public class TransactionsApi {
         }
     }
 
+    public  String addTransactions(Transaction transaction) throws IOException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonString = mapper.writeValueAsString(transaction);
+
+            authController = new AuthorizationController();
+            String token = authController.getAuthToken();
+            HttpClient client = HttpClient.newHttpClient();
+
+            // Создаем запрос
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "transactions"))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
+
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonString))
+                    .build();
+
+            // Выполняем запрос
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 201) {
+                return "Успех";
+            } else {
+                System.out.println("Error: " + response.statusCode());
+                return "Не успех";
+            }
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Authentication failed: " + e.getMessage());
+            return null;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
