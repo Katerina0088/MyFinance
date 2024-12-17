@@ -1,5 +1,7 @@
 package com.dz.myfinance.models;
 import com.dz.myfinance.enums.TransactionType;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -32,4 +34,16 @@ public class Transaction {
 
     @Column(name = "transaction_type")
     private TransactionType type;
+
+    @Transient
+    private String categoryName;
+
+    @PostLoad
+    public void updateCategoryString() {
+        if (this.category != null) {
+            this.categoryName = this.category.getName();
+        } else {
+            this.categoryName = null;
+        }
+    }
 }

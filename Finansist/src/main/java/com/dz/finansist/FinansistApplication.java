@@ -1,15 +1,11 @@
 package com.dz.finansist;
 
+import com.dz.finansist.controllers.LoginController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.Group;
-import javafx.scene.text.Text;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class FinansistApplication extends Application{
 
@@ -28,9 +24,6 @@ public class FinansistApplication extends Application{
     @Override
     public void start(Stage primaryStage) {
         try {
-
-            LoginController loginController = new LoginController();
-
             // Загружаем FXML для окна авторизации
             Parent root = FXMLLoader.load(getClass().getResource("fxml/login-view.fxml"));
             Scene scene = new Scene(root);
@@ -41,19 +34,6 @@ public class FinansistApplication extends Application{
             // Добавляем обработчик закрытия окна авторизации
             authStage.setOnCloseRequest(e -> System.exit(0));
 
-
-
-
-
-
-            //LoginController loginController = new LoginController();
-
-            // Создаем окно авторизации
-           //loginController.showLoginWindow();
-
-            // Добавляем обработчик закрытия окна
-            //Stage stage = (Stage)((Parent)primaryStage.getScene().getRoot()).getScene().getWindow();
-            //stage.setOnCloseRequest(event -> System.exit(0));
         } catch(Exception e) {
             e.printStackTrace();
         }

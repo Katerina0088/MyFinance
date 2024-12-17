@@ -42,9 +42,11 @@ dependencies {
   implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
 
   implementation 'org.json:json:20240303'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
 
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
 }
 test {
 useJUnitPlatform()}

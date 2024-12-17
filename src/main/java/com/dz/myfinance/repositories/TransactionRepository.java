@@ -1,5 +1,6 @@
 package com.dz.myfinance.repositories;
 
+import com.dz.myfinance.dto.TransactionDto;
 import com.dz.myfinance.enums.TransactionType;
 import com.dz.myfinance.models.Transaction;
 import com.dz.myfinance.models.User;
@@ -18,6 +19,7 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     List<Transaction> findAllByUserId(Long userId);
+
 
     @Query("SELECT COUNT(t) FROM Transaction t WHERE t.user = :user")
     long countTransactionsByUser(User user);

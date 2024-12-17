@@ -69,50 +69,7 @@ public class WebSecurityConfig {
      * @return SecurityFilterChain экземпляр фильтра безопасности
      * @throws Exception если возникнет ошибка при конфигурации
      */
-    /* @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests((requests) -> requests
-                        // Разрешаем доступ к статическим ресурсам (стили, скрипты, утилиты и иконки) для пользователей и администраторов
-                        .requestMatchers("/style/**", "/js/**", "/util/**", "/icon/**").permitAll()//.hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/register**", "/login**").permitAll()
-                        .requestMatchers("/administrator**").hasAnyRole( "EMPLOYEE","ADMIN")
-                        // Требуем аутентификации для всех остальных запросов
-                        .anyRequest().authenticated()
-                )
-                // Настройка формы входа
-                .formLogin((form) -> form
-                        .loginPage("/login") // URL страницы входа
-                        .permitAll() // Позволяет доступ к этой странице всем пользователям
-                        .defaultSuccessUrl("/", true) // URL по умолчанию после успешного входа
-                )
-                // Настройка выхода из системы
-                .logout((logout) -> logout.permitAll())
-                // Настройка CSRF-протокола для предотвращения атак типа Cross-Site Request Forgery
 
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(cookieCsrfTokenRepository())
-                )
-                // Обработчик исключений безопасности
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedHandler((req, res, exc) -> {
-                            // Отправляем ошибку 403 Forbidden при доступе запрещенных ресурсов
-                            res.sendError(res.SC_FORBIDDEN, "Forbidden");
-                        })
-                )
-                // Добавляем фильтр CORS перед фильтром сохранения контекста безопасности
-                .addFilterBefore(corsFilter(), SecurityContextPersistenceFilter.class);
-
-
-        http.authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api**").permitAll())
-                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
-
-        return http.build();
-    }
-*/
 
     @Bean
     @Order(1)
@@ -195,10 +152,7 @@ public class WebSecurityConfig {
         authProvider.setUserDetailsService(userDetailsService()); // Устанавливаем UserDetailsService для проверки учетных данных
         return authProvider;
     }
-    //@Bean
-    //public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-    //    return authenticationConfiguration.getAuthenticationManager();
-    //}
+
     /**
      * Создает и возвращает BCryptPasswordEncoder для шифрования паролей.
      *
